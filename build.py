@@ -39,7 +39,7 @@ if sys.version_info[0] != 2:
   raise Exception("Blockly build only compatible with Python 2.x.\n"
                   "You are using: " + sys.version)
 
-import errno, glob, httplib, json, os, re, subprocess, threading, urllib
+import errno, glob, httplib, json, os, re, subprocess, threading, urllib, traceback
 
 REMOTE_COMPILER = "remote"
 
@@ -569,11 +569,12 @@ if __name__ == "__main__":
     calcdeps = import_path(os.path.join(
         closure_root, closure_library, "closure", "bin", "calcdeps.py"))
 
+
     # Sanity check the local compiler
     test_args = [closure_compiler, os.path.join("build", "test_input.js")]
     test_proc = subprocess.Popen(test_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     (stdout, _) = test_proc.communicate()
-    assert stdout == read(os.path.join("build", "test_expect.js"))
+    assert stdout.strip() == read(os.path.join("build", "test_expect.js")).strip()
 
     print("Using local compiler: %s ...\n" % CLOSURE_COMPILER_NPM)
   except (ImportError, AssertionError):
